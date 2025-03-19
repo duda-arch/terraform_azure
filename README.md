@@ -8,4 +8,3 @@ Este repositório reúne estudos e projetos práticos voltados para a criação,
 - **Documentação Detalhada:** Guias, exemplos e melhores práticas para implementação e integração de serviços.
 - **Projetos Reais:** Exemplos práticos que demonstram a aplicação de conceitos DevOps em cenários de produção e desenvolvimento.
 
-Explore, aprenda e, se desejar, contribua com melhorias para impulsionar a inovação na gestão de ambientes em nuvem.
