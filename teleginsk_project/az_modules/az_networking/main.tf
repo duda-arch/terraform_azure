@@ -1,5 +1,10 @@
+locals {
+  vm_envs       = { for key, value in var.vms : key => value if value.with_vm }
+  function_envs = { for key, value in var.vms : key => value if !value.with_vm }
+}
+
 resource "azurerm_virtual_network" "vnet" {
-  for_each = local.vms
+  for_each = var.vms
 
   name                = "vnet-${each.value.suffix}"
   address_space       = each.value.vnet_address_space
@@ -8,16 +13,28 @@ resource "azurerm_virtual_network" "vnet" {
 }
 
 resource "azurerm_subnet" "subnet" {
-  for_each = local.vms
+  for_each = var.vms
 
   name                 = "subnet-${each.value.suffix}"
   address_prefixes     = each.value.subnet_address_prefixes
   virtual_network_name = azurerm_virtual_network.vnet[each.key].name
   resource_group_name  = var.resource_group_name
+
+  # A integração de rede da Function App exige a subnet delegada ao App Service.
+  dynamic "delegation" {
+    for_each = each.value.with_vm ? [] : [1]
+    content {
+      name = "app-service"
+      service_delegation {
+        name    = "Microsoft.Web/serverFarms"
+        actions = ["Microsoft.Network/virtualNetworks/subnets/action"]
+      }
+    }
+  }
 }
 
 resource "azurerm_network_interface" "nic_vm" {
-  for_each = local.vms
+  for_each = local.vm_envs
 
   name                = "nic-vm-${each.value.suffix}"
   location            = var.resource_group_location
@@ -32,11 +49,11 @@ resource "azurerm_network_interface" "nic_vm" {
 }
 
 resource "azurerm_network_security_group" "nsg" {
-  name                = "myNetworkSecurityGroup"
+  name                = "nsg-vms"
   location            = var.resource_group_location
   resource_group_name = var.resource_group_name
 
-  dynamic security_rule {
+  dynamic "security_rule" {
     for_each = var.security_rule
     content {
       name                       = security_rule.value.name
@@ -53,9 +70,8 @@ resource "azurerm_network_security_group" "nsg" {
 }
 
 resource "azurerm_network_interface_security_group_association" "nsg_association" {
-  for_each = local.vms
+  for_each = local.vm_envs
 
   network_interface_id      = azurerm_network_interface.nic_vm[each.key].id
   network_security_group_id = azurerm_network_security_group.nsg.id
 }
-

@@ -1,36 +1,19 @@
 variable "resource_group_name" {
   type        = string
-  description = "resource_group_name"
+  description = "Nome do resource group."
 }
 
 variable "resource_group_location" {
   type        = string
-  description = "resource_group_location"
+  description = "Região do resource group."
 }
 
-variable "vms" {
-  type = map(object({
-    with_vm      = bool
-    suffix       = string
-    name         = string
-    size         = string
-    username     = string
-    admin_username = string
-    admin_password = string
-    vnet_address_space          = list(string)
-    subnet_address_prefixes     = list(string)
-    nic_private_ip_address      = string
-  }))
-  description = "vms"
+variable "function_subnet_id" {
+  type        = string
+  description = "Subnet delegada onde a Function App se conecta à rede."
 }
 
-variable "subnet_id" {
-  type    = list(string)
-  description = "subnet_id"
+variable "function_source_dir" {
+  type        = string
+  description = "Pasta com o código da Function App, que vira o pacote .zip."
 }
-
-variable "subnet_vmc_id" {
-  type    = string
-  description = "subnet_vmc_id"
-}
-

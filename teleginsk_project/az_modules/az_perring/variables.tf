@@ -1,61 +1,54 @@
 variable "resource_group_name" {
   type        = string
-  description = "resource_group_name"
+  description = "Nome do resource group."
 }
 
 variable "resource_group_location" {
   type        = string
-  description = "resource_group_location"
+  description = "Região do resource group."
 }
 
 variable "vms" {
   type = map(object({
-    with_vm      = bool
-    suffix       = string
-    name         = string
-    size         = string
-    username     = string
-    admin_username = string
-    admin_password = string
-    vnet_address_space          = list(string)
-    subnet_address_prefixes     = list(string)
-    nic_private_ip_address      = string
+    with_vm                 = bool
+    suffix                  = string
+    name                    = string
+    size                    = string
+    username                = string
+    admin_username          = string
+    vnet_address_space      = list(string)
+    subnet_address_prefixes = list(string)
+    nic_private_ip_address  = string
   }))
-  description = "vms"
+  description = "Ambientes: cada item vira uma VM (with_vm = true) ou a rede da Function App (with_vm = false)."
 }
 
 variable "vnet_id" {
-  type        = string
-  description = "vnet_id"
+  type        = map(string)
+  description = "ID de cada VNet, por ambiente."
 }
 
 variable "vnet_name" {
-  type        = list(string)
-  description = "vnet_name"
+  type        = map(string)
+  description = "Nome de cada VNet, por ambiente."
 }
 
-variable "vnet_address_space" {
-  type        = list(string)
-  description = "vnet_address_space"
+variable "subnet_id" {
+  type        = map(string)
+  description = "ID de cada subnet, por ambiente."
 }
-
 
 variable "firewall_vnet_name" {
-  type    = string
-  description = "firewall_vnet_name"
+  type        = string
+  description = "Nome da VNet hub do firewall."
 }
 
 variable "firewall_vnet_id" {
   type        = string
-  description = "firewall_vnet_id"
+  description = "ID da VNet hub do firewall."
 }
 
 variable "firewall_private_ip_address" {
   type        = string
-  description = "firewall_private_ip_address"
-}
-
-variable "subnet_id" {
-  type    = list(string)
-  description = "subnet_id"
+  description = "IP privado do firewall, usado como próximo salto das rotas."
 }

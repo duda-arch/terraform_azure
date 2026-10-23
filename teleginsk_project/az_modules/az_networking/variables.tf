@@ -1,31 +1,30 @@
 variable "resource_group_name" {
   type        = string
-  description = "resource_group_name"
+  description = "Nome do resource group."
 }
 
 variable "resource_group_location" {
   type        = string
-  description = "resource_group_location"
+  description = "Região do resource group."
 }
 
-variable vms {
+variable "vms" {
   type = map(object({
-    with_vm      = bool
-    suffix       = string
-    name         = string
-    size         = string
-    username     = string
-    admin_username = string
-    admin_password = string
-    vnet_address_space          = list(string)
-    subnet_address_prefixes     = list(string)
-    nic_private_ip_address      = string
+    with_vm                 = bool
+    suffix                  = string
+    name                    = string
+    size                    = string
+    username                = string
+    admin_username          = string
+    vnet_address_space      = list(string)
+    subnet_address_prefixes = list(string)
+    nic_private_ip_address  = string
   }))
-  description = "vms"
+  description = "Ambientes: cada item vira uma VM (with_vm = true) ou a rede da Function App (with_vm = false)."
 }
 
-variable security_rule {
-  type = map(object({
+variable "security_rule" {
+  type = list(object({
     name                       = string
     priority                   = number
     direction                  = string
@@ -36,5 +35,5 @@ variable security_rule {
     source_address_prefix      = string
     destination_address_prefix = string
   }))
-  description = "security_rule"
+  description = "Regras do Network Security Group das VMs."
 }
