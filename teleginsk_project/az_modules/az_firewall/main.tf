@@ -57,8 +57,9 @@ resource "azurerm_firewall_application_rule_collection" "firewall_application_ru
   name                = "HTTPS-Rule"
   azure_firewall_name = azurerm_firewall.firewall.name
   resource_group_name = var.resource_group_name
-  priority            = 100
+  priority            = 200
   action              = "Allow"
+
   dynamic "rule" {
     for_each = var.https_rules
     content {

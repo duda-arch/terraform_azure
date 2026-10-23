@@ -6,15 +6,15 @@ variable "icmp_rules" {
     {
       name                  = "Allow-ICMP-SubnetA-to-SubnetB"
       protocols             = ["ICMP"]
-      source_addresses      = ["10.1.0.0/24"]  # Origem: Subnet A
-      destination_addresses = ["10.2.0.0/24"]  # Destino: Subnet B
+      source_addresses      = ["10.1.0.0/24"] # Origem: Subnet A
+      destination_addresses = ["10.2.0.0/24"] # Destino: Subnet B
       destination_ports     = ["*"]
     },
     {
       name                  = "Allow-ICMP-SubnetB-to-SubnetA"
       protocols             = ["ICMP"]
-      source_addresses      = ["10.2.0.0/24"]  # Origem: Subnet B
-      destination_addresses = ["10.1.0.0/24"]  # Destino: Subnet A
+      source_addresses      = ["10.2.0.0/24"] # Origem: Subnet B
+      destination_addresses = ["10.1.0.0/24"] # Destino: Subnet A
       destination_ports     = ["*"]
     }
   ]
@@ -24,7 +24,7 @@ variable "https_rules" {
     {
       name             = "Allow-HTTPS-Rule1"
       source_addresses = ["10.2.0.0/24"]
-      target_fqdns     = ["*"] 
+      target_fqdns     = ["*"]
 
       protocol = {
         type = "Https"
@@ -34,14 +34,14 @@ variable "https_rules" {
     {
       name             = "Allow-HTTPS-Rule2"
       source_addresses = ["10.3.0.0/24"]
-      target_fqdns     = ["*"] 
+      target_fqdns     = ["*"]
 
-      protocol  = {
+      protocol = {
         type = "Https"
         port = 443
       }
     },
-   
+
   ]
 }
 ##              ##      
@@ -52,6 +52,7 @@ variable "https_rules" {
 ## BEGIN NETWORKING ##
 ##                  ##
 variable "security_rule" {
+  description = "Regras do Network Security Group aplicado às interfaces das VMs."
   default = [
     {
       name                       = "SSH"
@@ -92,49 +93,40 @@ variable "security_rule" {
 ##                  ##      
 ## END NETWORKING   ##
 ##                  ##
-resource "azurerm_management_group" "sandbox"{
-  name = "sandbox"
-  display_name = "Sandbox"
-  parent_management_group_id = "/providers/Microsoft.Management/managementGroups/Root"
-}
-
 locals {
   vms = {
     vm_a = {
-      with_vm      = true
-      suffix       = "a"
-      name         = "ubuntu-vma"
-      size         = "Standard_B1s"
-      username     = "vma_user"
-      admin_username = "vma_user"
-      admin_password = var.vm_admin_password
-      vnet_address_space          = ["10.1.0.0/16"]
-      subnet_address_prefixes     = ["10.1.0.0/24"]
-      nic_private_ip_address      = "10.1.0.10"
+      with_vm                 = true
+      suffix                  = "a"
+      name                    = "ubuntu-vma"
+      size                    = "Standard_B1s"
+      username                = "vma_user"
+      admin_username          = "vma_user"
+      vnet_address_space      = ["10.1.0.0/16"]
+      subnet_address_prefixes = ["10.1.0.0/24"]
+      nic_private_ip_address  = "10.1.0.10"
     },
     vm_b = {
-      with_vm      = true
-      suffix       = "b"
-      name         = "ubuntu-vmb"
-      size         = "Standard_B1s"
-      username     = "vmb_user"
-      admin_username = "vmb_user"
-      admin_password = var.vm_admin_password
-      vnet_address_space          = ["10.2.0.0/16"]
-      subnet_address_prefixes     = ["10.2.0.0/24"]
-      nic_private_ip_address      = "10.2.0.10"
+      with_vm                 = true
+      suffix                  = "b"
+      name                    = "ubuntu-vmb"
+      size                    = "Standard_B1s"
+      username                = "vmb_user"
+      admin_username          = "vmb_user"
+      vnet_address_space      = ["10.2.0.0/16"]
+      subnet_address_prefixes = ["10.2.0.0/24"]
+      nic_private_ip_address  = "10.2.0.10"
     },
     vm_c = {
-      with_vm      = false
-      suffix       = "c"
-      name         = "ubuntu-vmc"
-      size         = "Standard_B1s"
-      username     = "vmc_user"
-      admin_username = "vmc_user"
-      admin_password = var.vm_admin_password
-      vnet_address_space          = ["10.3.0.0/16"]
-      subnet_address_prefixes     = ["10.3.0.0/24"]
-      nic_private_ip_address      = "10.3.0.10"    
+      with_vm                 = false
+      suffix                  = "c"
+      name                    = "ubuntu-vmc"
+      size                    = "Standard_B1s"
+      username                = "vmc_user"
+      admin_username          = "vmc_user"
+      vnet_address_space      = ["10.3.0.0/16"]
+      subnet_address_prefixes = ["10.3.0.0/24"]
+      nic_private_ip_address  = "10.3.0.10"
     }
   }
 }
@@ -159,10 +151,4 @@ variable "subscription_id" {
 variable "tenant_id" {
   type        = string
   description = "ID do tenant (Microsoft Entra ID). Defina em terraform.tfvars."
-}
-
-variable "vm_admin_password" {
-  type        = string
-  sensitive   = true
-  description = "Senha do usuário administrador das VMs. Defina em terraform.tfvars."
 }

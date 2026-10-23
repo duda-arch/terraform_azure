@@ -1,28 +1,19 @@
-resource "random_id" "storage_account" {
-  byte_length = 8
+locals {
+  vm_envs = { for key, value in var.vms : key => value if value.with_vm }
 }
 
 resource "tls_private_key" "vm" {
-  for_each = { for key, value in var.vms : key => value if value.with_vm == true }
+  for_each = local.vm_envs
 
   algorithm = "RSA"
   rsa_bits  = 4096
 }
 
-resource "azurerm_ssh_public_key" "vm" {
-  for_each = { for key, value in var.vms : key => value if value.with_vm == true }
-
-  name      = "ssh_vm_${each.value.name}"
-  public_key = tls_private_key.vm[each.key].public_key_openssh
-  resource_group_name = var.resource_group_name
-  location  = var.resource_group_location
-}
-
 resource "azurerm_linux_virtual_machine" "vm" {
-
-  for_each = { for key, value in var.vms : key => value if value.with_vm == true }
+  for_each = local.vm_envs
 
   name                  = each.value.name
+  computer_name         = each.value.name
   resource_group_name   = var.resource_group_name
   location              = var.resource_group_location
   size                  = each.value.size
@@ -31,7 +22,7 @@ resource "azurerm_linux_virtual_machine" "vm" {
 
   admin_ssh_key {
     username   = each.value.admin_username
-    public_key = azurerm_ssh_public_key.vm[each.key].public_key_openssh
+    public_key = tls_private_key.vm[each.key].public_key_openssh
   }
 
   os_disk {
@@ -41,14 +32,11 @@ resource "azurerm_linux_virtual_machine" "vm" {
 
   source_image_reference {
     publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "18.04-LTS"
+    offer     = "0001-com-ubuntu-server-jammy"
+    sku       = "22_04-lts-gen2"
     version   = "latest"
   }
 
-  computer_name = each.value.name
-
-  boot_diagnostics {
-    storage_account_uri = var.mystorageaqui_primary_blob_endpoint
-  }
+  # Sem storage_account_uri, a Azure usa uma conta de armazenamento gerenciada.
+  boot_diagnostics {}
 }
