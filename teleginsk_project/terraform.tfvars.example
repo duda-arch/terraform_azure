@@ -1,0 +1,6 @@
+# Copie para terraform.tfvars e preencha com os seus valores.
+# O terraform.tfvars está no .gitignore e não deve ir para o repositório.
+
+subscription_id   = "00000000-0000-0000-0000-000000000000"
+tenant_id         = "00000000-0000-0000-0000-000000000000"
+vm_admin_password = "troque-por-uma-senha-forte"

@@ -107,7 +107,7 @@ locals {
       size         = "Standard_B1s"
       username     = "vma_user"
       admin_username = "vma_user"
-      admin_password = "Password1234!"
+      admin_password = var.vm_admin_password
       vnet_address_space          = ["10.1.0.0/16"]
       subnet_address_prefixes     = ["10.1.0.0/24"]
       nic_private_ip_address      = "10.1.0.10"
@@ -119,7 +119,7 @@ locals {
       size         = "Standard_B1s"
       username     = "vmb_user"
       admin_username = "vmb_user"
-      admin_password = "Password1234!"
+      admin_password = var.vm_admin_password
       vnet_address_space          = ["10.2.0.0/16"]
       subnet_address_prefixes     = ["10.2.0.0/24"]
       nic_private_ip_address      = "10.2.0.10"
@@ -131,18 +131,12 @@ locals {
       size         = "Standard_B1s"
       username     = "vmc_user"
       admin_username = "vmc_user"
-      admin_password = "Password1234!"
+      admin_password = var.vm_admin_password
       vnet_address_space          = ["10.3.0.0/16"]
       subnet_address_prefixes     = ["10.3.0.0/24"]
       nic_private_ip_address      = "10.3.0.10"    
     }
   }
-}
-
-variable "resource_group_id" {
-  type        = string
-  default     = "/subscriptions/9729e8eb-94a9-4cda-9993-e1f754dcc49d/resourceGroups/rg_storage_account_blobs_teleginsk"
-  description = ""
 }
 
 variable "resource_group_name" {
@@ -158,11 +152,17 @@ variable "resource_group_location" {
 }
 
 variable "subscription_id" {
-  default = "9729e8eb-94a9-4cda-9993-e1f754dcc49d"
   type        = string
+  description = "ID da assinatura da Azure. Defina em terraform.tfvars."
 }
 
 variable "tenant_id" {
-  default = "95ab9d66-7f24-46ba-b282-558db5a19be6"
   type        = string
+  description = "ID do tenant (Microsoft Entra ID). Defina em terraform.tfvars."
+}
+
+variable "vm_admin_password" {
+  type        = string
+  sensitive   = true
+  description = "Senha do usuário administrador das VMs. Defina em terraform.tfvars."
 }
